@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "mcp-leadsclean"
 version = "0.1.0"
-description = "MCP Server — B2B Sales Intelligence for AI Agents. Extract structured lead data from any company website."
+description = "Open-source MCP Server for B2B lead intelligence extraction. Works with Claude Desktop, Cursor, and any MCP client."
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
@@ -13,14 +13,14 @@ authors = [{ name = "Edition", email = "edition.cai@gmail.com" }]
 keywords = [
     "mcp",
     "mcp-server",
-    "sales-intelligence",
-    "lead-generation",
-    "lead-extraction",
-    "b2b-leads",
-    "ai-sdr",
-    "ai-agent",
     "model-context-protocol",
-    "sales-automation",
+    "ai-agent",
+    "lead-extraction",
+    "b2b-intelligence",
+    "claude-desktop",
+    "llm-tools",
+    "reference-implementation",
+    "gdpr",
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",

@@ -1,5 +1,7 @@
 # LeadsClean MCP Server
 
+[![Glama MCP Server](https://glama.ai/mcp/servers/badge/@edition/leads-clean-mcp-server)](https://glama.ai/mcp/servers/@edition/leads-clean-mcp-server)
+
 An open-source MCP server that extracts structured B2B lead intelligence from company websites. Point it at any URL — get back a clean JSON object with company summary, buying signals, inferred needs, and personalised icebreaker lines.
 
 Built as a reference implementation for MCP tool development. Demonstrates multi-provider LLM routing, dual-transport MCP serving, GDPR compliance patterns, and API key management — patterns you can reuse in your own MCP servers.

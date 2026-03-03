@@ -1,10 +1,10 @@
 # LeadsClean MCP Server
 
-**Category: Sales Intelligence · B2B Lead Extraction**
+An open-source MCP server that extracts structured B2B lead intelligence from company websites. Point it at any URL — get back a clean JSON object with company summary, buying signals, inferred needs, and personalised icebreaker lines.
 
-An MCP (Model Context Protocol) server that gives AI agents structured B2B lead intelligence extracted directly from company websites. Point it at any URL and get back a clean JSON object — company summary, buying signals, inferred needs, and personalised icebreaker lines — ready to drop into your outreach pipeline.
+Built as a reference implementation for MCP tool development. Demonstrates multi-provider LLM routing, dual-transport MCP serving, GDPR compliance patterns, and API key management — patterns you can reuse in your own MCP servers.
 
-Built for agent pipelines. Works with Claude Desktop, Cursor, and any MCP-compatible client.
+Works with Claude Desktop, Cursor, and any MCP-compatible client.
 
 ---
 
@@ -37,7 +37,7 @@ Built for agent pipelines. Works with Claude Desktop, Cursor, and any MCP-compat
 }
 ```
 
-Every response includes `data_provenance` — a machine-readable GDPR metadata block indicating data source, PII status, and legal basis. This lets enterprise security teams approve the integration without a manual compliance review.
+Every response includes `data_provenance` — a machine-readable GDPR metadata block indicating data source, PII status, and legal basis.
 
 ---
 
@@ -156,6 +156,23 @@ curl -X POST http://localhost:8000/extract-leads \
     "seller_context": "We provide cloud HR software to mid-size logistics companies."
   }'
 ```
+
+---
+
+## Reusable patterns
+
+This project demonstrates several patterns worth extracting for your own MCP servers:
+
+| Pattern | Where | What it does |
+|---------|-------|--------------|
+| Multi-provider LLM routing | `core.py` | Dispatches to OpenAI / Anthropic / Qwen / MiniMax based on model name prefix |
+| Dual-transport MCP serving | `mcp_server.py` | Same tool logic served over stdio (local) and HTTP (remote) |
+| SSRF protection | `core.py` | Validates URLs against private IP ranges before external fetch |
+| Prompt injection mitigation | `core.py` | XML boundary tags around user-controlled content in LLM prompts |
+| API key hashing | `db.py` | SHA-256 hashing with prefix display — keys are never stored in plain text |
+| Usage metering | `db.py` + `auth.py` | Per-key monthly quotas with auto-reset and atomic increment |
+| GDPR provenance | `core.py` | Machine-readable compliance metadata on every response |
+| Demo mode | `core.py` + `auth.py` | Full bypass of external services for pipeline testing |
 
 ---
 

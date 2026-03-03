@@ -4,6 +4,31 @@ import os
 import httpx
 from openai import AsyncOpenAI
 
+# ---------------------------------------------------------------------------
+# Demo fixture — returned when LEADSCLEAN_DEMO=1 is set.
+# Lets reviewers and new users see the output schema without an API key.
+# ---------------------------------------------------------------------------
+_DEMO_FIXTURE = {
+    "_demo": True,
+    "company_name": "Acme Hotels Group",
+    "core_business_summary": "Boutique hotel chain with 12 properties across Europe.",
+    "product_category_match": (
+        "Strong match — hotel groups purchase furniture in bulk for room refits and new openings."
+    ),
+    "recent_company_trigger": (
+        "Announced expansion to 3 new cities in Q1 2026, adding 400+ rooms across the portfolio."
+    ),
+    "inferred_business_need": (
+        "Bulk furnishing (beds, sofas) for new hotel rooms on tight fit-out timelines."
+    ),
+    "icebreaker_hook_business": (
+        "Running 12 properties across Europe is impressive — furnishing them at scale is exactly where we help."
+    ),
+    "icebreaker_hook_news": (
+        "Saw the Q1 expansion news — we help hotel groups source wholesale beds and sofas fast when timelines are tight."
+    ),
+}
+
 SYSTEM_PROMPT_TEMPLATE = """
 You are an elite B2B Sales Intelligence Agent. Your primary function is to analyze raw, unstructured text scraped from target company websites and extract highly accurate, structured commercial signals.
 STRICT FACTUALITY: You must extract information strictly based on the provided text. DO NOT hallucinate. If a specific piece of information cannot be found, you MUST output null for that field.
@@ -43,6 +68,8 @@ async def extract_lead_intelligence(
     seller_context: str | None = None,
     model: str = "gpt-4o-mini",
 ) -> dict:
+    if os.getenv("LEADSCLEAN_DEMO"):
+        return _DEMO_FIXTURE
     """
     Fetch a company website and return structured B2B lead intelligence.
 

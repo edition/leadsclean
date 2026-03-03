@@ -121,7 +121,7 @@ async def batch_extract_leads(
     return json.dumps(list(results), ensure_ascii=False, indent=2)
 
 
-if __name__ == "__main__":
+def main() -> None:
     parser = argparse.ArgumentParser(description="LeadsClean MCP Server")
     parser.add_argument(
         "--transport",
@@ -141,3 +141,7 @@ if __name__ == "__main__":
         mcp.run(transport="streamable-http", port=args.port)
     else:
         mcp.run(transport="stdio")
+
+
+if __name__ == "__main__":
+    main()

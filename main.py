@@ -84,8 +84,11 @@ class ExtractRequest(BaseModel):
     model: str = Field(
         default="gpt-4o-mini",
         description=(
-            "OpenAI model ID. 'gpt-4o-mini' is fast and cost-efficient for list processing. "
-            "Use 'gpt-4o' for richer analysis on high-value accounts."
+            "Model ID — the LLM provider is inferred from the model name prefix. "
+            "OpenAI (OPENAI_API_KEY): 'gpt-4o-mini' (default), 'gpt-4o', 'o3-mini'. "
+            "Anthropic (ANTHROPIC_API_KEY): 'claude-haiku-4-5-20251001', 'claude-sonnet-4-6'. "
+            "Alibaba Qwen (DASHSCOPE_API_KEY): 'qwen-turbo', 'qwen-plus', 'qwen-max'. "
+            "MiniMax (MINIMAX_API_KEY): 'abab6.5s-chat', 'abab6.5-chat'."
         ),
     )
 

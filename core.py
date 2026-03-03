@@ -78,6 +78,100 @@ def _build_provenance(url: str) -> dict:
     }
 
 
+# ---------------------------------------------------------------------------
+# LLM provider dispatch — provider is inferred from the model name prefix:
+#   gpt-* / o1-* / o3-*  →  OpenAI          (OPENAI_API_KEY)
+#   claude-*              →  Anthropic        (ANTHROPIC_API_KEY)
+#   qwen-*                →  Alibaba DashScope (DASHSCOPE_API_KEY)
+#   abab* / minimax-*     →  MiniMax          (MINIMAX_API_KEY)
+# ---------------------------------------------------------------------------
+
+_OPENAI_COMPAT_PROVIDERS = {
+    # prefix → (base_url, env_var, supports_json_mode)
+    "qwen": (
+        "https://dashscope.aliyuncs.com/compatible-mode/v1",
+        "DASHSCOPE_API_KEY",
+        True,
+    ),
+    "abab": (
+        "https://api.minimax.chat/v1",
+        "MINIMAX_API_KEY",
+        False,  # MiniMax does not guarantee json_object mode on all models
+    ),
+    "minimax-": (
+        "https://api.minimax.chat/v1",
+        "MINIMAX_API_KEY",
+        False,
+    ),
+}
+
+
+async def _call_openai_compat(
+    system_prompt: str,
+    user_content: str,
+    model: str,
+    base_url: str | None,
+    env_var: str,
+    json_mode: bool,
+) -> str:
+    api_key = os.getenv(env_var)
+    if not api_key:
+        raise EnvironmentError(f"{env_var} is not configured.")
+
+    client_kwargs: dict = {"api_key": api_key}
+    if base_url:
+        client_kwargs["base_url"] = base_url
+
+    client = AsyncOpenAI(**client_kwargs)
+    create_kwargs: dict = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_content},
+        ],
+    }
+    if json_mode:
+        create_kwargs["response_format"] = {"type": "json_object"}
+
+    completion = await client.chat.completions.create(**create_kwargs)
+    return completion.choices[0].message.content
+
+
+async def _call_anthropic(system_prompt: str, user_content: str, model: str) -> str:
+    from anthropic import AsyncAnthropic  # imported lazily — only needed for Claude models
+
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if not api_key:
+        raise EnvironmentError("ANTHROPIC_API_KEY is not configured.")
+
+    client = AsyncAnthropic(api_key=api_key)
+    message = await client.messages.create(
+        model=model,
+        max_tokens=1024,
+        system=system_prompt,
+        messages=[{"role": "user", "content": user_content}],
+    )
+    return message.content[0].text
+
+
+async def _call_llm(system_prompt: str, user_content: str, model: str) -> str:
+    """Dispatch to the correct LLM provider based on the model name prefix."""
+    if model.startswith("claude-"):
+        return await _call_anthropic(system_prompt, user_content, model)
+
+    for prefix, (base_url, env_var, json_mode) in _OPENAI_COMPAT_PROVIDERS.items():
+        if model.startswith(prefix):
+            return await _call_openai_compat(
+                system_prompt, user_content, model, base_url, env_var, json_mode
+            )
+
+    # Default: OpenAI (gpt-*, o1-*, o3-*, etc.)
+    return await _call_openai_compat(
+        system_prompt, user_content, model,
+        base_url=None, env_var="OPENAI_API_KEY", json_mode=True,
+    )
+
+
 async def fetch_page_content(url: str) -> str:
     """Fetch clean Markdown content for a URL via Jina Reader."""
     jina_url = f"https://r.jina.ai/{url}"
@@ -115,27 +209,12 @@ async def extract_lead_intelligence(
 
     resolved_seller_context = seller_context or DEFAULT_SELLER_CONTEXT
     system_prompt = SYSTEM_PROMPT_TEMPLATE.format(seller_context=resolved_seller_context)
-
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
-        raise EnvironmentError("OPENAI_API_KEY is not configured.")
-
-    client = AsyncOpenAI(api_key=api_key)
-    completion = await client.chat.completions.create(
-        model=model,
-        response_format={"type": "json_object"},
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {
-                "role": "user",
-                "content": (
-                    "Analyze the following website content and extract lead intelligence:\n\n"
-                    + markdown_content
-                ),
-            },
-        ],
+    user_content = (
+        "Analyze the following website content and extract lead intelligence:\n\n"
+        + markdown_content
     )
 
-    result = json.loads(completion.choices[0].message.content)
+    raw = await _call_llm(system_prompt, user_content, model)
+    result = json.loads(raw)
     result["data_provenance"] = _build_provenance(url)
     return result

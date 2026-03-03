@@ -57,8 +57,11 @@ async def extract_lead_intelligence(
         seller_context: One-sentence description of what the seller offers and to whom.
                         Omit to use the server default. Example:
                         "We provide cloud HR software to mid-size logistics companies."
-        model: OpenAI model ID to use. Defaults to gpt-4o-mini (fast, cost-efficient).
-               Use gpt-4o for richer analysis on high-value accounts.
+        model: Model ID — provider is inferred from the name prefix:
+               gpt-*/o1-*/o3-* → OpenAI (OPENAI_API_KEY, default: gpt-4o-mini),
+               claude-*        → Anthropic (ANTHROPIC_API_KEY),
+               qwen-*          → Alibaba DashScope (DASHSCOPE_API_KEY),
+               abab*/minimax-* → MiniMax (MINIMAX_API_KEY).
 
     Returns:
         JSON string containing the structured lead intelligence object.
@@ -96,7 +99,8 @@ async def batch_extract_leads(
               Example: ["https://acmecorp.com", "https://betahotels.io"]
         seller_context: One-sentence description of what the seller offers and to whom.
                         Applied uniformly across all URLs in the batch.
-        model: OpenAI model ID. Defaults to gpt-4o-mini for cost-efficient batch runs.
+        model: Model ID — same provider-prefix rules as extract_lead_intelligence.
+               Applied uniformly to all URLs in the batch.
 
     Returns:
         JSON string containing a list of results in the same order as `urls`.

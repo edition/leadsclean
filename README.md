@@ -46,7 +46,7 @@ Every response includes `data_provenance` — a machine-readable GDPR metadata b
 ### Prerequisites
 
 - Python 3.11+
-- An [OpenAI API key](https://platform.openai.com/api-keys)
+- An API key for at least one supported LLM provider (see [Environment variables](#environment-variables) below)
 
 ### Install
 
@@ -80,6 +80,8 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS)
   }
 }
 ```
+
+Set the key for whichever provider(s) you use (see [Environment variables](#environment-variables)).
 
 ### Cursor
 
@@ -124,10 +126,17 @@ All tool calls return a sanitised fixture response when `LEADSCLEAN_DEMO=1` is s
 
 ## Environment variables
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `OPENAI_API_KEY` | Yes (unless demo mode) | OpenAI API key for LLM extraction |
-| `LEADSCLEAN_DEMO` | No | Set to `1` to return fixture data without calling OpenAI |
+The `model` parameter controls which provider is used. Provider is inferred from the model-name prefix — set the corresponding key:
+
+| Variable | Required when | Model prefix | Description |
+|----------|--------------|--------------|-------------|
+| `OPENAI_API_KEY` | Using OpenAI (default) | `gpt-*`, `o1-*`, `o3-*` | OpenAI API key |
+| `ANTHROPIC_API_KEY` | Using Claude | `claude-*` | Anthropic API key |
+| `DASHSCOPE_API_KEY` | Using Alibaba Qwen | `qwen-*` | Alibaba DashScope API key |
+| `MINIMAX_API_KEY` | Using MiniMax | `abab*`, `minimax-*` | MiniMax API key |
+| `LEADSCLEAN_DEMO` | — | — | Set to `1` to return fixture data without any LLM call |
+
+The default model is `gpt-4o-mini` (OpenAI). To switch provider, pass the desired model ID in the tool call — e.g. `claude-3-5-haiku-20241022` for Anthropic, `qwen-turbo` for Alibaba.
 
 ---
 
@@ -171,7 +180,7 @@ uvicorn main:app --reload
 ## How it works
 
 1. **Fetch** — retrieves clean Markdown from the target URL via [Jina Reader](https://jina.ai/reader/)
-2. **Extract** — passes the content to an OpenAI model with a structured prompt
+2. **Extract** — passes the content to your chosen LLM (OpenAI, Anthropic Claude, Alibaba Qwen, or MiniMax) with a structured prompt
 3. **Return** — outputs a JSON object matching the schema above
 
 Content never leaves the pipeline: no data is stored by LeadsClean.

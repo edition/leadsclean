@@ -17,7 +17,8 @@ from fastapi.security import APIKeyHeader
 from db import AuthError, check_and_increment, get_key_info
 
 _DEMO_KEY_INFO: dict = {
-    "key": "demo",
+    "key_hash": "demo",
+    "key_prefix": "lc_demo",
     "email": "demo",
     "plan": "demo",
     "calls_used": 0,

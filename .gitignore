@@ -14,9 +14,14 @@ build/
 venv/
 env/
 
-# Environment files
+# Environment files (.env.example is intentionally tracked)
 .env
-.env.*
+.env.local
+.env.production
+
+# Database — never commit; contains hashed API keys
+*.db
+*.sqlite3
 
 # IDE
 .idea/

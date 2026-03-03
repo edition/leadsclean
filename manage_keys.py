@@ -38,12 +38,14 @@ def cmd_list(_args: argparse.Namespace) -> None:
     if not rows:
         print("No API keys found.")
         return
-    header = f"{'Key':<52}  {'Email':<28}  {'Plan':<8}  {'Used':>6}/{'Limit':<7}  Reset"
+    # key_prefix is a display hint only (first 12 chars of raw key, e.g. "lc_630b0a79")
+    # raw keys are never stored — use the full raw key to revoke
+    header = f"{'Prefix':<14}  {'Email':<28}  {'Plan':<8}  {'Used':>6}/{'Limit':<7}  Reset"
     print(header)
     print("-" * len(header))
     for r in rows:
         print(
-            f"{r['key']:<52}  {r['email']:<28}  {r['plan']:<8}  "
+            f"{r['key_prefix'] + '…':<14}  {r['email']:<28}  {r['plan']:<8}  "
             f"{r['calls_used']:>6}/{r['monthly_limit']:<7}  {r['reset_at']}"
         )
 
@@ -78,7 +80,7 @@ def main() -> None:
     sub.add_parser("list", help="List all API keys with current usage")
 
     p_revoke = sub.add_parser("revoke", help="Permanently revoke an API key")
-    p_revoke.add_argument("key", help="The lc_... key to revoke")
+    p_revoke.add_argument("key", help="The full lc_... raw key issued at creation time")
 
     args = parser.parse_args()
 

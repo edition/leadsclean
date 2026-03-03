@@ -220,7 +220,7 @@ async def extract_leads(
         latency_ms = int((time.monotonic() - t0) * 1000)
         background_tasks.add_task(
             log_usage,
-            key_info["key"],
+            key_info["key_hash"],
             request.target_url,
             request.model,
             latency_ms,

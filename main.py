@@ -1,7 +1,11 @@
-from fastapi import FastAPI, HTTPException
+import time
+
+from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException, Response
 from pydantic import BaseModel, ConfigDict, Field
 
+from auth import read_api_key, require_api_key
 from core import extract_lead_intelligence
+from db import init_db, log_usage
 
 # ---------------------------------------------------------------------------
 # Response models — also drive the OpenAPI schema shown in /docs
@@ -67,6 +71,14 @@ class LeadIntelligenceResponse(BaseModel):
     )
 
 
+class UsageResponse(BaseModel):
+    plan: str = Field(description="Current subscription plan.")
+    calls_used: int = Field(description="API calls consumed this calendar month.")
+    monthly_limit: int = Field(description="Maximum calls allowed per month on this plan.")
+    calls_remaining: int = Field(description="Calls remaining before the monthly limit is hit.")
+    reset_at: str = Field(description="ISO date (YYYY-MM-DD) when calls_used resets to zero.")
+
+
 # ---------------------------------------------------------------------------
 # Request model
 # ---------------------------------------------------------------------------
@@ -116,6 +128,8 @@ app = FastAPI(
     title="LeadsClean — B2B Lead Intelligence API",
     description=(
         "Extract structured B2B sales intelligence from any company website.\n\n"
+        "**Authentication:** All endpoints require an `X-API-Key` header. "
+        "Contact us to obtain a key.\n\n"
         "**Category:** Sales Intelligence\n\n"
         "LeadsClean fetches a target company's public website via Jina Reader, "
         "then uses an LLM to extract buying signals, inferred needs, and personalised "
@@ -123,17 +137,30 @@ app = FastAPI(
         "Every response includes a `data_provenance` block with GDPR metadata "
         "(source type, PII flag, legal basis) to support enterprise security reviews."
     ),
-    version="0.1.0",
+    version="0.2.0",
     openapi_tags=[
         {
             "name": "Lead Extraction",
             "description": "Analyse company websites and return structured lead intelligence.",
-        }
+        },
+        {
+            "name": "Account",
+            "description": "API key usage and quota information.",
+        },
     ],
     contact={"name": "LeadsClean", "url": "https://github.com/your-org/leadsclean"},
     license_info={"name": "MIT"},
 )
 
+
+@app.on_event("startup")
+async def startup() -> None:
+    init_db()
+
+
+# ---------------------------------------------------------------------------
+# POST /extract-leads
+# ---------------------------------------------------------------------------
 
 @app.post(
     "/extract-leads",
@@ -144,26 +171,83 @@ app = FastAPI(
         "and uses an LLM to return structured B2B sales intelligence.\n\n"
         "The response includes buying signals, an inferred business need relative to the "
         "seller's offering, two personalised icebreaker lines, and a `data_provenance` block "
-        "for GDPR compliance."
+        "for GDPR compliance.\n\n"
+        "**Rate-limit headers** are included on every response:\n"
+        "- `X-RateLimit-Limit` — monthly call quota\n"
+        "- `X-RateLimit-Remaining` — calls left this month\n"
+        "- `X-RateLimit-Reset` — date the quota resets (YYYY-MM-DD)"
     ),
     tags=["Lead Extraction"],
     responses={
         200: {"description": "Structured lead intelligence extracted from the target URL."},
+        401: {"description": "Missing or invalid API key."},
         422: {"description": "Invalid input or no content could be extracted from the URL."},
+        429: {"description": "Monthly call limit reached."},
         500: {"description": "Server configuration error (e.g. missing OPENAI_API_KEY)."},
-        502: {"description": "Upstream error from Jina Reader or OpenAI."},
+        502: {"description": "Upstream error from Jina Reader or the LLM provider."},
     },
 )
-async def extract_leads(request: ExtractRequest) -> LeadIntelligenceResponse:
+async def extract_leads(
+    request: ExtractRequest,
+    response: Response,
+    background_tasks: BackgroundTasks,
+    key_info: dict = Depends(require_api_key),
+) -> LeadIntelligenceResponse:
+    t0 = time.monotonic()
+    status = "ok"
     try:
-        return await extract_lead_intelligence(
+        result = await extract_lead_intelligence(
             url=request.target_url,
             seller_context=request.seller_context,
             model=request.model,
         )
+        response.headers["X-RateLimit-Limit"] = str(key_info["monthly_limit"])
+        response.headers["X-RateLimit-Remaining"] = str(
+            key_info["monthly_limit"] - key_info["calls_used"]
+        )
+        response.headers["X-RateLimit-Reset"] = key_info["reset_at"]
+        return result
     except ValueError as e:
+        status = "error"
         raise HTTPException(status_code=422, detail=str(e))
     except EnvironmentError as e:
+        status = "error"
         raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
+        status = "error"
         raise HTTPException(status_code=502, detail=str(e))
+    finally:
+        latency_ms = int((time.monotonic() - t0) * 1000)
+        background_tasks.add_task(
+            log_usage,
+            key_info["key_hash"],
+            request.target_url,
+            request.model,
+            latency_ms,
+            status,
+        )
+
+
+# ---------------------------------------------------------------------------
+# GET /usage
+# ---------------------------------------------------------------------------
+
+@app.get(
+    "/usage",
+    response_model=UsageResponse,
+    summary="Get current API key usage",
+    description="Returns quota usage for the authenticated API key. Does not count as a billable call.",
+    tags=["Account"],
+    responses={
+        200: {"description": "Current usage and quota for this API key."},
+        401: {"description": "Missing or invalid API key."},
+    },
+)
+async def get_usage(key_info: dict = Depends(read_api_key)) -> UsageResponse:
+    return UsageResponse(
+        plan=key_info["plan"],
+        calls_used=key_info["calls_used"],
+        monthly_limit=key_info["monthly_limit"],
+        calls_remaining=key_info["monthly_limit"] - key_info["calls_used"],
+        reset_at=key_info["reset_at"],
+    )

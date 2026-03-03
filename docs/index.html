@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LeadsClean — B2B Lead Intelligence for AI Agents</title>
-  <meta name="description" content="MCP server that turns any company URL into structured B2B lead intelligence. Buying signals, icebreakers, GDPR provenance. Works with Claude Desktop, Cursor, and OpenAI Agents SDK.">
-  <meta property="og:title" content="LeadsClean — B2B Lead Intelligence for AI Agents">
-  <meta property="og:description" content="Point a company URL at LeadsClean. Get back buying signals, personalised icebreakers, and GDPR-ready provenance — in one MCP tool call.">
+  <title>LeadsClean — Open-Source MCP Server for B2B Lead Extraction</title>
+  <meta name="description" content="Open-source MCP server that extracts structured B2B lead intelligence from company websites. Multi-provider LLM routing, GDPR compliance, dual-transport. Works with Claude Desktop, Cursor, and any MCP client.">
+  <meta property="og:title" content="LeadsClean — Open-Source MCP Server for B2B Lead Extraction">
+  <meta property="og:description" content="Open-source MCP server that turns any company URL into structured B2B lead intelligence. A reference implementation for building MCP tools.">
   <meta property="og:type" content="website">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
   <style>
@@ -275,44 +275,8 @@
     .sc { color: var(--muted); }       /* shell comment */
     .sk { color: #79c0ff; }            /* shell keyword */
 
-    /* ── Pricing ───────────────────────────────────────────── */
-    #pricing { background: var(--bg1); border-top: 1px solid var(--border); }
-    .pricing-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
-    }
-    @media (max-width: 768px) { .pricing-grid { grid-template-columns: 1fr; } }
-    .plan {
-      background: var(--bg); border: 1px solid var(--border);
-      border-radius: var(--r); padding: 32px;
-      display: flex; flex-direction: column;
-      transition: border-color .2s;
-      position: relative;
-    }
-    .plan.featured {
-      border-color: var(--accent);
-      background: linear-gradient(160deg, rgba(99,102,241,.07) 0%, var(--bg) 60%);
-    }
-    .plan-badge {
-      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
-      background: var(--accent); color: #fff;
-      font-size: 0.7rem; font-weight: 700;
-      padding: 3px 14px; border-radius: 100px; white-space: nowrap;
-    }
-    .plan-name  { font-size: 0.8rem; font-weight: 600; color: var(--dim); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 10px; }
-    .plan-price { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.035em; margin-bottom: 4px; }
-    .plan-price span { font-size: 1rem; font-weight: 400; color: var(--dim); }
-    .plan-desc  { font-size: 0.83rem; color: var(--muted); margin-bottom: 24px; }
-    .plan-features { list-style: none; margin-bottom: 28px; flex: 1; }
-    .plan-features li {
-      display: flex; align-items: flex-start; gap: 10px;
-      font-size: 0.87rem; color: var(--dim);
-      padding: 7px 0; border-bottom: 1px solid var(--border);
-    }
-    .plan-features li:last-child { border-bottom: none; }
-    .plan-features li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
-    .plan-cta { margin-top: auto; }
-    .btn-full { width: 100%; justify-content: center; }
-    .pricing-note { text-align: center; color: var(--muted); font-size: 0.8rem; margin-top: 22px; }
+    /* ── Patterns ──────────────────────────────────────────── */
+    #patterns { background: var(--bg1); border-top: 1px solid var(--border); }
 
     /* ── Footer ────────────────────────────────────────────── */
     footer {
@@ -346,12 +310,11 @@
     <div class="nav-links">
       <a href="#features" class="btn btn-ghost">Features</a>
       <a href="#install"  class="btn btn-ghost">Install</a>
-      <a href="#pricing"  class="btn btn-ghost">Pricing</a>
-      <a href="https://github.com/edition/leadsclean" class="btn btn-outline" target="_blank" rel="noopener">
+      <a href="#patterns" class="btn btn-ghost">Patterns</a>
+      <a href="https://github.com/edition/leadsclean" class="btn btn-primary" target="_blank" rel="noopener">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-        GitHub
+        View on GitHub
       </a>
-      <a href="#pricing" class="btn btn-primary">Get Early Access</a>
     </div>
   </div>
 </nav>
@@ -361,19 +324,20 @@
   <div class="container">
     <div class="eyebrow">
       <span class="live"></span>
-      MCP Server &nbsp;·&nbsp; v0.1.0 &nbsp;·&nbsp; MIT
+      Open Source &nbsp;·&nbsp; MCP Server &nbsp;·&nbsp; MIT
     </div>
-    <h1>B2B lead intelligence<br>for <em>AI agents</em></h1>
+    <h1>Open-source <em>MCP server</em><br>for B2B lead extraction</h1>
     <p class="hero-sub">
       Point any company URL at LeadsClean. Get back structured buying signals,
       personalised icebreakers, and GDPR-ready provenance — in a single tool call.
+      A reference implementation for building your own MCP tools.
     </p>
     <div class="hero-ctas">
       <a href="#install" class="btn btn-primary btn-lg">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
         Quick start
       </a>
-      <a href="#pricing" class="btn btn-outline btn-lg">Get early access &rarr;</a>
+      <a href="https://github.com/edition/leadsclean" class="btn btn-outline btn-lg" target="_blank" rel="noopener">View source &rarr;</a>
     </div>
 
     <!-- terminal animation -->
@@ -423,8 +387,8 @@
 <section id="features" class="section">
   <div class="container">
     <div class="lbl">Features</div>
-    <h2>Everything an SDR agent needs</h2>
-    <p class="sub">One tool call returns a complete commercial intelligence package. No prompt engineering. No scraper maintenance.</p>
+    <h2>What it extracts</h2>
+    <p class="sub">One tool call returns a structured intelligence package. No prompt engineering. No scraper maintenance. BYO API key.</p>
     <div class="grid-3">
 
       <div class="card">
@@ -606,77 +570,74 @@
   </div>
 </section>
 
-<!-- ═══ PRICING / COMMERCIAL TEST ════════════════════════════════════════ -->
-<section id="pricing" class="section">
+<!-- ═══ REUSABLE PATTERNS ═══════════════════════════════════════════════ -->
+<section id="patterns" class="section">
   <div class="container">
     <div class="tc">
-      <div class="lbl">Pricing</div>
-      <h2>Start free, scale when ready</h2>
+      <div class="lbl">Reference Patterns</div>
+      <h2>Patterns you can reuse</h2>
       <p class="sub">
-        Self-host for free with your own API keys.
-        Hosted Cloud API coming soon — join the waitlist to lock in early-access pricing.
+        LeadsClean is a working reference implementation. These patterns are designed to be extracted and adapted for your own MCP servers.
       </p>
     </div>
 
-    <div class="pricing-grid" style="margin-top:48px;">
+    <div class="grid-3" style="margin-top:48px;">
 
-      <!-- Free -->
-      <div class="plan">
-        <div class="plan-name">Open Source</div>
-        <div class="plan-price">Free</div>
-        <div class="plan-desc">Self-hosted. Always free.</div>
-        <ul class="plan-features">
-          <li>Unlimited extractions</li>
-          <li>BYO API key (OpenAI, Claude, Qwen, MiniMax)</li>
-          <li>MCP stdio + HTTP transport</li>
-          <li>Batch up to 20 URLs</li>
-          <li>GDPR data_provenance</li>
-          <li>MIT license</li>
-        </ul>
-        <div class="plan-cta">
-          <a href="#install" class="btn btn-outline btn-full">Get started &rarr;</a>
+      <div class="card">
+        <div class="card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="1.8" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
         </div>
+        <h3>Multi-Provider LLM Routing</h3>
+        <p>Dispatches to OpenAI, Anthropic, Qwen, or MiniMax based on model name prefix. Callers swap providers at call time — zero server config changes.</p>
+        <span class="chip chip-purple">core.py</span>
       </div>
 
-      <!-- Pro -->
-      <div class="plan featured">
-        <div class="plan-badge">Most popular</div>
-        <div class="plan-name">Cloud Pro</div>
-        <div class="plan-price">$29<span>/mo</span></div>
-        <div class="plan-desc">Hosted API — no infra, no LLM keys.</div>
-        <ul class="plan-features">
-          <li>5,000 extractions / month</li>
-          <li>Hosted API endpoint</li>
-          <li>REST + MCP transport</li>
-          <li>Batch up to 100 URLs</li>
-          <li>Usage dashboard</li>
-          <li>Priority support</li>
-        </ul>
-        <div class="plan-cta">
-          <a href="mailto:edition.cai@gmail.com?subject=LeadsClean%20Cloud%20Pro%20%E2%80%94%20Early%20Access&body=Hi%2C%20I%27d%20like%20early%20access%20to%20LeadsClean%20Cloud%20Pro.%0A%0AUse%20case%3A%20" class="btn btn-primary btn-full">Join waitlist &rarr;</a>
+      <div class="card">
+        <div class="card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="1.8" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
         </div>
+        <h3>Dual-Transport MCP</h3>
+        <p>Same tool logic served over <code style="color:var(--accent2)">stdio</code> (Claude Desktop, Cursor) and <code style="color:var(--accent2)">HTTP</code> (remote agents, production pipelines). One codebase, two modes.</p>
+        <span class="chip chip-purple">mcp_server.py</span>
       </div>
 
-      <!-- Team -->
-      <div class="plan">
-        <div class="plan-name">Cloud Team</div>
-        <div class="plan-price">$99<span>/mo</span></div>
-        <div class="plan-desc">Agent pipelines at scale.</div>
-        <ul class="plan-features">
-          <li>25,000 extractions / month</li>
-          <li>Hosted API endpoint</li>
-          <li>Async job queue + webhooks</li>
-          <li>Per-session billing via API</li>
-          <li>Custom seller context per team</li>
-          <li>SLA + dedicated support</li>
-        </ul>
-        <div class="plan-cta">
-          <a href="mailto:edition.cai@gmail.com?subject=LeadsClean%20Cloud%20Team%20%E2%80%94%20Early%20Access&body=Hi%2C%20I%27d%20like%20early%20access%20to%20LeadsClean%20Cloud%20Team.%0A%0ATeam%20size%3A%20%0AUse%20case%3A%20" class="btn btn-outline btn-full">Join waitlist &rarr;</a>
+      <div class="card">
+        <div class="card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="1.8" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         </div>
+        <h3>Security Hardening</h3>
+        <p>SSRF protection (private IP blocking), prompt injection mitigation (XML boundary tags), API key SHA-256 hashing — never stored in plain text.</p>
+        <span class="chip chip-purple">core.py + db.py</span>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="1.8" aria-hidden="true"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+        </div>
+        <h3>GDPR Provenance</h3>
+        <p>Machine-readable <code style="color:var(--green)">data_provenance</code> block on every response: source type, PII flag, legal basis. Enterprise security teams can approve without manual review.</p>
+        <span class="chip chip-green">core.py</span>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="1.8" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg>
+        </div>
+        <h3>Usage Metering</h3>
+        <p>Per-key monthly quotas with auto-reset, atomic increment, and rate-limit response headers. Includes a CLI tool for key management.</p>
+        <span class="chip chip-purple">db.py + auth.py</span>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="1.8" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        </div>
+        <h3>Demo Mode</h3>
+        <p>Set <code style="color:var(--accent2)">LEADSCLEAN_DEMO=1</code> to bypass all external services. Returns a fixture with <code style="color:var(--accent2)">_demo: true</code> — ideal for pipeline testing without API keys.</p>
+        <span class="chip chip-purple">core.py + auth.py</span>
       </div>
 
     </div>
-    <p class="pricing-note">Waitlist members get 3 months at 50% off &nbsp;&middot;&nbsp; No credit card required</p>
   </div>
 </section>
 

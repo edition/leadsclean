@@ -187,6 +187,12 @@ Content never leaves the pipeline: no data is stored by LeadsClean.
 
 ---
 
+## Built with Claude
+
+This project was developed with the assistance of [Claude](https://claude.ai) by Anthropic — an AI assistant used for code generation, architecture design, and documentation.
+
+---
+
 ## License
 
 MIT

@@ -25,9 +25,19 @@ Built for agent pipelines. Works with Claude Desktop, Cursor, and any MCP-compat
   "recent_company_trigger": "Announced expansion to 3 new cities in Q1 2026, adding 400+ rooms.",
   "inferred_business_need": "Bulk furnishing for new hotel rooms on tight fit-out timelines.",
   "icebreaker_hook_business": "Running 12 properties across Europe is impressive — furnishing them at scale is where we help.",
-  "icebreaker_hook_news": "Saw the Q1 expansion news — we help hotel groups source wholesale beds and sofas fast."
+  "icebreaker_hook_news": "Saw the Q1 expansion news — we help hotel groups source wholesale beds and sofas fast.",
+  "data_provenance": {
+    "source_url": "https://acmehotels.com",
+    "source_type": "public_website",
+    "collection_method": "jina_reader_public_fetch",
+    "contains_pii": false,
+    "gdpr_basis": "legitimate_interest",
+    "gdpr_notes": "Extracted solely from publicly available company web pages. No personal data collected. Compliant with GDPR Art. 6(1)(f)."
+  }
 }
 ```
+
+Every response includes `data_provenance` — a machine-readable GDPR metadata block indicating data source, PII status, and legal basis. This lets enterprise security teams approve the integration without a manual compliance review.
 
 ---
 

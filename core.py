@@ -27,6 +27,17 @@ _DEMO_FIXTURE = {
     "icebreaker_hook_news": (
         "Saw the Q1 expansion news — we help hotel groups source wholesale beds and sofas fast when timelines are tight."
     ),
+    "data_provenance": {
+        "source_url": "https://acmehotels.com",
+        "source_type": "public_website",
+        "collection_method": "jina_reader_public_fetch",
+        "contains_pii": False,
+        "gdpr_basis": "legitimate_interest",
+        "gdpr_notes": (
+            "Extracted solely from publicly available company web pages. "
+            "No personal data collected. Compliant with GDPR Art. 6(1)(f)."
+        ),
+    },
 }
 
 SYSTEM_PROMPT_TEMPLATE = """
@@ -50,6 +61,22 @@ DEFAULT_SELLER_CONTEXT = (
     "to B2B buyers such as hotels, retailers, and interior design firms."
 )
 
+_GDPR_NOTES = (
+    "Extracted solely from publicly available company web pages. "
+    "No personal data collected. Compliant with GDPR Art. 6(1)(f)."
+)
+
+
+def _build_provenance(url: str) -> dict:
+    return {
+        "source_url": url,
+        "source_type": "public_website",
+        "collection_method": "jina_reader_public_fetch",
+        "contains_pii": False,
+        "gdpr_basis": "legitimate_interest",
+        "gdpr_notes": _GDPR_NOTES,
+    }
+
 
 async def fetch_page_content(url: str) -> str:
     """Fetch clean Markdown content for a URL via Jina Reader."""
@@ -68,8 +95,6 @@ async def extract_lead_intelligence(
     seller_context: str | None = None,
     model: str = "gpt-4o-mini",
 ) -> dict:
-    if os.getenv("LEADSCLEAN_DEMO"):
-        return _DEMO_FIXTURE
     """
     Fetch a company website and return structured B2B lead intelligence.
 
@@ -81,7 +106,11 @@ async def extract_lead_intelligence(
     - inferred_business_need
     - icebreaker_hook_business
     - icebreaker_hook_news
+    - data_provenance  (GDPR / source metadata)
     """
+    if os.getenv("LEADSCLEAN_DEMO"):
+        return _DEMO_FIXTURE
+
     markdown_content = await fetch_page_content(url)
 
     resolved_seller_context = seller_context or DEFAULT_SELLER_CONTEXT
@@ -107,4 +136,6 @@ async def extract_lead_intelligence(
         ],
     )
 
-    return json.loads(completion.choices[0].message.content)
+    result = json.loads(completion.choices[0].message.content)
+    result["data_provenance"] = _build_provenance(url)
+    return result

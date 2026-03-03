@@ -50,6 +50,7 @@ async def extract_lead_intelligence(
     - inferred_business_need (specific need that aligns with seller offering)
     - icebreaker_hook_business (personalized opening line referencing core business)
     - icebreaker_hook_news    (opening line referencing a recent trigger, if found)
+    - data_provenance         (GDPR metadata: source type, PII flag, legal basis)
 
     Args:
         url: Full URL of the target company website (e.g. "https://acmecorp.com").
@@ -99,8 +100,8 @@ async def batch_extract_leads(
 
     Returns:
         JSON string containing a list of results in the same order as `urls`.
-        Each entry is either the lead intelligence object or an error object
-        with keys {"error": "...", "url": "..."}.
+        Each entry is either the lead intelligence object (including data_provenance)
+        or an error object with keys {"error": "...", "url": "..."}.
     """
     if len(urls) > 20:
         return json.dumps(

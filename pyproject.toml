@@ -1,10 +1,10 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling<1.25.0"]
 build-backend = "hatchling.build"
 
 [project]
 name = "mcp-leadsclean"
-version = "0.1.0"
+version = "0.1.1"
 description = "Open-source MCP Server for B2B lead intelligence extraction. Works with Claude Desktop, Cursor, and any MCP client."
 readme = "README.md"
 requires-python = ">=3.11"

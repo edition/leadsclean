@@ -9,6 +9,7 @@ description = "MCP Server — B2B Sales Intelligence for AI Agents. Extract stru
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
+authors = [{ name = "Edition", email = "edition.cai@gmail.com" }]
 keywords = [
     "mcp",
     "mcp-server",
@@ -46,9 +47,9 @@ dependencies = [
 mcp-leadsclean = "mcp_server:main"
 
 [project.urls]
-Homepage = "https://github.com/your-org/leadsclean"
-Repository = "https://github.com/your-org/leadsclean"
-Issues = "https://github.com/your-org/leadsclean/issues"
+Homepage = "https://github.com/edition/leadsclean"
+Repository = "https://github.com/edition/leadsclean"
+Issues = "https://github.com/edition/leadsclean/issues"
 
 [tool.hatch.build.targets.wheel]
 include = ["mcp_server.py", "core.py", "main.py"]

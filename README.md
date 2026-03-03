@@ -57,7 +57,7 @@ pip install mcp-leadsclean
 Or clone and install from source:
 
 ```bash
-git clone https://github.com/your-org/leadsclean
+git clone https://github.com/edition/leadsclean
 cd leadsclean
 pip install -e .
 ```

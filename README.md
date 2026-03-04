@@ -8,6 +8,10 @@ Built as a reference implementation for MCP tool development. Demonstrates multi
 
 Works with Claude Desktop, Cursor, and any MCP-compatible client.
 
+<a href="https://glama.ai/mcp/servers/@edition/leads-clean-mcp-server">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@edition/leads-clean-mcp-server/badge" alt="LeadsClean Server MCP server" />
+</a>
+
 ---
 
 ## Tools
